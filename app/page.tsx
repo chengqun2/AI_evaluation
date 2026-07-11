@@ -28,6 +28,36 @@ const PLATFORM_META = {
   },
 } as const;
 
+function buildStaticDemo(feelings: string[], platform: Platform) {
+  const english: Record<string, string> = {
+    "服务很贴心": "the thoughtful, friendly service",
+    "出餐速度快": "the surprisingly quick service",
+    "环境很干净": "the clean, comfortable space",
+    "饮品颜值高": "the beautiful presentation",
+    "味道很惊喜": "the balanced, genuinely good flavor",
+    "性价比不错": "the fair price for the quality",
+  };
+  const chinese: Record<string, string> = {
+    "服务很贴心": "店员服务很贴心",
+    "出餐速度快": "出餐速度很快",
+    "环境很干净": "店里干净又舒服",
+    "饮品颜值高": "饮品颜值很在线",
+    "味道很惊喜": "味道比预期更惊喜",
+    "性价比不错": "这个品质和价格很值",
+  };
+  const en = feelings.map((item) => english[item]).filter(Boolean);
+  const zh = feelings.map((item) => chinese[item]).filter(Boolean);
+  const review = platform === "google"
+    ? `Stopped by Sunny Tea House while I was in San Jose and had a really pleasant experience. I especially appreciated ${en.join(" and ")}. The drink tasted fresh without being overly sweet, and the whole visit felt easy and welcoming. I’d happily come back when I’m in the area.`
+    : `在 San Jose 挖到一家会想二刷的奶茶店！🧋\n\nSunny Tea House 真的有点超出预期～${zh.join("，")}，整个体验很舒服。点的饮品清爽不齁甜，随手拍也很好看 ✨\n\n如果刚好在附近，适合来一杯给下午充充电。下次想再试试别的口味！\n\n#SanJose探店 #湾区美食 #奶茶控 #SunnyTeaHouse`;
+  return {
+    review,
+    summary: `顾客认可${zh.join("、")}，整体体验积极，并表达了再次到店意愿。`,
+    reply: `谢谢你分享这次体验！很开心我们的${zh.join("和")}给你留下了好印象。期待下次再为你做一杯喜欢的饮品！`,
+    source: "demo",
+  };
+}
+
 export default function Home() {
   const [feelings, setFeelings] = useState<string[]>([]);
   const [platform, setPlatform] = useState<Platform | null>(null);
@@ -65,6 +95,14 @@ export default function Home() {
     setDetails(null);
 
     try {
+      if (window.location.hostname.endsWith("github.io")) {
+        await new Promise((resolve) => window.setTimeout(resolve, 700));
+        const data = buildStaticDemo(selectedLabels, platform);
+        setReview(data.review);
+        setDetails({ summary: data.summary, reply: data.reply, source: data.source });
+        showToast("演示文案已生成");
+        return;
+      }
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -76,7 +114,10 @@ export default function Home() {
       setDetails({ summary: data.summary, reply: data.reply, source: data.source });
       showToast(data.source === "ai" ? "AI 已生成并同步给店家" : "演示文案已生成");
     } catch {
-      showToast("生成遇到问题，请再试一次");
+      const data = buildStaticDemo(selectedLabels, platform);
+      setReview(data.review);
+      setDetails({ summary: data.summary, reply: data.reply, source: data.source });
+      showToast("已切换至演示生成模式");
     } finally {
       setLoading(false);
     }
