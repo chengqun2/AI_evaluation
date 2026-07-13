@@ -27,7 +27,7 @@ function mockContent(feelings: string[], platform: Platform) {
 
 function buildPrompt(feelings: string[], platform: Platform) {
   const style = platform === "google"
-    ? "Write in English, 70–110 words, like a real North American local customer. Be specific, balanced, and conversational. No emoji, hashtags, hype, star rating, or invented product names."
+    ? "用简体中文写 70–110 字的评价，像一位真实的本地顾客。具体、客观、口语化。不使用 Emoji、话题标签、夸张营销、星级或虚构品名。"
     : "用简体中文写 100–160 字的小红书种草笔记。自然口语，2–4 个短段落，2–4 个恰当 Emoji，结尾 3–5 个相关话题。避免夸张营销、虚构品名和绝对化表达。";
 
   return `You are a review-writing assistant. Help the customer express only the experience they selected; never fabricate visits, products, prices, staff names, or facts. Store: Sunny Tea House, San Jose. Selected feelings: ${feelings.join(", ")}. Platform rules: ${style}\n\nReturn strict JSON with exactly three string fields: review, summary, reply. summary must be a one-sentence Chinese summary for the merchant. reply must be a warm, concise Chinese merchant reply draft. Do not wrap JSON in markdown.`;

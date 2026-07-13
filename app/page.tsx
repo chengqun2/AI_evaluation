@@ -16,7 +16,7 @@ const FEELINGS = [
 const PLATFORM_META = {
   google: {
     name: "Google",
-    hint: "Natural · English",
+    hint: "真实口吻 · 中文",
     mark: "G",
     url: "https://www.google.com/maps/search/?api=1&query=Sunny+Tea+House+San+Jose",
   },
@@ -29,14 +29,6 @@ const PLATFORM_META = {
 } as const;
 
 function buildStaticDemo(feelings: string[], platform: Platform) {
-  const english: Record<string, string> = {
-    "服务很贴心": "the thoughtful, friendly service",
-    "出餐速度快": "the surprisingly quick service",
-    "环境很干净": "the clean, comfortable space",
-    "饮品颜值高": "the beautiful presentation",
-    "味道很惊喜": "the balanced, genuinely good flavor",
-    "性价比不错": "the fair price for the quality",
-  };
   const chinese: Record<string, string> = {
     "服务很贴心": "店员服务很贴心",
     "出餐速度快": "出餐速度很快",
@@ -45,10 +37,9 @@ function buildStaticDemo(feelings: string[], platform: Platform) {
     "味道很惊喜": "味道比预期更惊喜",
     "性价比不错": "这个品质和价格很值",
   };
-  const en = feelings.map((item) => english[item]).filter(Boolean);
   const zh = feelings.map((item) => chinese[item]).filter(Boolean);
   const review = platform === "google"
-    ? `Stopped by Sunny Tea House while I was in San Jose and had a really pleasant experience. I especially appreciated ${en.join(" and ")}. The drink tasted fresh without being overly sweet, and the whole visit felt easy and welcoming. I’d happily come back when I’m in the area.`
+    ? `路过 San Jose 时顺道去了 Sunny Tea House，整体体验挺舒服的。${zh.join("，")}。饮品清爽不齁甜，喝起来很顺口，环境也让人放松。下次来附近还会想再喝一杯。`
     : `在 San Jose 挖到一家会想二刷的奶茶店！🧋\n\nSunny Tea House 真的有点超出预期～${zh.join("，")}，整个体验很舒服。点的饮品清爽不齁甜，随手拍也很好看 ✨\n\n如果刚好在附近，适合来一杯给下午充充电。下次想再试试别的口味！\n\n#SanJose探店 #湾区美食 #奶茶控 #SunnyTeaHouse`;
   return {
     review,
